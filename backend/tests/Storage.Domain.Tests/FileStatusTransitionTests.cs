@@ -10,20 +10,18 @@ public class FileStatusTransitionTests
     private static DomainFile CreatePendingFile() =>
         DomainFile.Create(Guid.NewGuid(), "test-service", "documents", "test.pdf", "application/pdf", 1024);
 
-    [Theory]
-    [InlineData(FileStatus.Pending, FileStatus.Scanning)]
-    public void Transition_FromPendingToScanning_Succeeds(FileStatus from, FileStatus to)
+    [Fact]
+    public void Transition_FromPendingToScanning_Succeeds()
     {
         var file = CreatePendingFile();
-        // file starts at Pending
-        var act = () => file.Transition(to);
+        var act = () => file.Transition(FileStatus.Scanning);
         act.Should().NotThrow();
     }
 
     [Theory]
-    [InlineData(FileStatus.Scanning, FileStatus.Ready)]
-    [InlineData(FileStatus.Scanning, FileStatus.Quarantined)]
-    public void Transition_FromScanningToReadyOrQuarantined_Succeeds(FileStatus from, FileStatus to)
+    [InlineData(FileStatus.Ready)]
+    [InlineData(FileStatus.Quarantined)]
+    public void Transition_FromScanningToReadyOrQuarantined_Succeeds(FileStatus to)
     {
         var file = CreatePendingFile();
         file.Transition(FileStatus.Scanning);
@@ -42,10 +40,10 @@ public class FileStatusTransitionTests
     }
 
     [Theory]
-    [InlineData(FileStatus.Pending, FileStatus.Ready)]
-    [InlineData(FileStatus.Pending, FileStatus.Quarantined)]
-    [InlineData(FileStatus.Pending, FileStatus.Deleted)]
-    public void Transition_InvalidFromPending_ThrowsInvalidStatusTransitionException(FileStatus from, FileStatus to)
+    [InlineData(FileStatus.Ready)]
+    [InlineData(FileStatus.Quarantined)]
+    [InlineData(FileStatus.Deleted)]
+    public void Transition_InvalidFromPending_ThrowsInvalidStatusTransitionException(FileStatus to)
     {
         var file = CreatePendingFile();
         var act = () => file.Transition(to);
@@ -92,19 +90,14 @@ public class FileStatusTransitionTests
     }
 
     [Theory]
-    [InlineData(FileStatus.Pending, FileStatus.Scanning)]
-    [InlineData(FileStatus.Scanning, FileStatus.Ready)]
-    [InlineData(FileStatus.Scanning, FileStatus.Quarantined)]
-    public void Transition_AfterValidTransition_StatusEqualsNewStatus(FileStatus from, FileStatus to)
+    [InlineData(FileStatus.Scanning)]
+    [InlineData(FileStatus.Ready)]
+    [InlineData(FileStatus.Quarantined)]
+    public void Transition_AfterValidTransition_StatusEqualsNewStatus(FileStatus to)
     {
-        DomainFile file;
-        if (from == FileStatus.Pending)
+        DomainFile file = CreatePendingFile();
+        if (to == FileStatus.Ready || to == FileStatus.Quarantined)
         {
-            file = CreatePendingFile();
-        }
-        else
-        {
-            file = CreatePendingFile();
             file.Transition(FileStatus.Scanning);
         }
         file.Transition(to);
