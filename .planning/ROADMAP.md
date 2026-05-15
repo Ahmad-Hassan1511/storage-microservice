@@ -63,7 +63,13 @@ Plans:
   4. `UploadService.CompleteUploadAsync` transitions file status to `scanning` and publishes `file.uploaded` when the SHA-256 checksum matches; it rejects on mismatch.
   5. `DownloadService.GetFileAsync` returns a pre-signed download URL for `ready` files the caller is authorised to access; it returns an access-denied result for cross-tenant or insufficient-permission requests.
 
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Port interfaces, Result type, CallerContext, integration events, shared DTOs, test project scaffold (Wave 1)
+- [ ] 02-02-PLAN.md — UploadService: InitiateUploadAsync + CompleteUploadAsync with TDD (Wave 2)
+- [ ] 02-03-PLAN.md — DownloadService: GetFileAsync + GetFileStreamAsync with TDD (Wave 2)
+- [ ] 02-04-PLAN.md — FileManagementService: soft delete, hard delete, list, patch, versions, share links with TDD (Wave 2)
 
 ---
 
@@ -222,7 +228,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Solution Scaffold & Domain Model | 3/3 | Complete   | 2026-05-15 |
-| 2. Application Layer & Port Interfaces | 0/? | Not started | - |
+| 2. Application Layer & Port Interfaces | 0/4 | Planning   | - |
 | 3. Persistence Adapter | 0/? | Not started | - |
 | 4. Storage Adapters | 0/? | Not started | - |
 | 5. Cache & Messaging Adapters | 0/? | Not started | - |
@@ -262,4 +268,4 @@ Plans:
 ---
 
 *Roadmap created: 2026-05-15*
-*Last updated: 2026-05-15 after initial creation*
+*Last updated: 2026-05-16 after Phase 2 planning*
