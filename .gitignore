@@ -1,0 +1,30 @@
+# .NET build output
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.nupkg
+*.snupkg
+
+# Angular
+frontend/node_modules/
+frontend/.angular/
+frontend/dist/
+
+# Node
+node_modules/
+
+# Environment files
+.env
+*.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml

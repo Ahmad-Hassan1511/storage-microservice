@@ -1,0 +1,10 @@
+<Project>
+  <Target Name="CheckInfrastructureReferences" BeforeTargets="Build"
+          Condition="'$(MSBuildProjectName)' == 'Storage.Domain' Or '$(MSBuildProjectName)' == 'Storage.Application'">
+    <ItemGroup>
+      <InfraRefs Include="@(ProjectReference)" Condition="$([System.String]::Copy('%(Identity)').Contains('Storage.Infrastructure'))" />
+    </ItemGroup>
+    <Error Condition="@(InfraRefs->Count()) &gt; 0"
+           Text="$(MSBuildProjectName) must not reference any Storage.Infrastructure.* project. Found: @(InfraRefs)" />
+  </Target>
+</Project>

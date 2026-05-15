@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Storage.Application\Storage.Application.csproj" />
+    <ProjectReference Include="..\Storage.Infrastructure.Persistence.SqlServer\Storage.Infrastructure.Persistence.SqlServer.csproj" />
+    <ProjectReference Include="..\Storage.Infrastructure.Storage.Wasabi\Storage.Infrastructure.Storage.Wasabi.csproj" />
+    <ProjectReference Include="..\Storage.Infrastructure.Storage.AzureBlob\Storage.Infrastructure.Storage.AzureBlob.csproj" />
+    <ProjectReference Include="..\Storage.Infrastructure.Storage.FileSystem\Storage.Infrastructure.Storage.FileSystem.csproj" />
+    <ProjectReference Include="..\Storage.Infrastructure.Cache.Redis\Storage.Infrastructure.Cache.Redis.csproj" />
+    <ProjectReference Include="..\Storage.Infrastructure.Cache.InMemory\Storage.Infrastructure.Cache.InMemory.csproj" />
+    <ProjectReference Include="..\Storage.Infrastructure.Messaging.RabbitMQ\Storage.Infrastructure.Messaging.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Storage.Infrastructure.Messaging.AzureServiceBus\Storage.Infrastructure.Messaging.AzureServiceBus.csproj" />
+  </ItemGroup>
+
+</Project>
