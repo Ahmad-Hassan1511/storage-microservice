@@ -1,6 +1,22 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+current_phase: Phase 1 — Solution Scaffold & Domain Model
+current_plan: Plan 02 (01-02-PLAN.md)
+status: In progress
+last_updated: "2026-05-16T00:50:00.000Z"
+progress:
+  total_phases: 10
+  completed_phases: 0
+  total_plans: 3
+  completed_plans: 1
+  percent: 33
+---
+
 # Project State: Storage Microservice
 
-*Last updated: 2026-05-15*
+*Last updated: 2026-05-16*
 
 ---
 
@@ -22,11 +38,11 @@
 ## Current Position
 
 **Current Phase:** Phase 1 — Solution Scaffold & Domain Model
-**Current Plan:** None (not started)
-**Status:** Not started
+**Current Plan:** Plan 02 — Domain core: entities, value objects, events, state machine
+**Status:** In progress — Plan 01 complete, Plan 02 is next
 
 ```
-Progress: [          ] 0%
+Progress: [███░░░░░░░] 33%
 
 Phase  1 [ ] Solution Scaffold & Domain Model
 Phase  2 [ ] Application Layer & Port Interfaces
@@ -49,8 +65,14 @@ Phase 10 [ ] E2E & Security Tests
 | Phases defined | 10 |
 | Requirements mapped | 95/95 |
 | Phases complete | 0/10 |
-| Plans written | 0 |
-| Plans complete | 0 |
+| Plans written | 3 (Phase 1) |
+| Plans complete | 1 |
+
+### Execution History
+
+| Phase-Plan | Duration | Tasks | Files |
+|------------|----------|-------|-------|
+| Phase 01-solution-scaffold-domain-model P01 | 50 min | 3 | 30 |
 
 ---
 
@@ -65,6 +87,9 @@ Phase 10 [ ] E2E & Security Tests
 | `StorageCapabilities` flags as the single branch point | FileSystem adapter transparently falls back to proxy upload | Pending validation |
 | MassTransit over raw broker clients | Single API for RabbitMQ + Azure Service Bus; broker is a config change | Pending validation |
 | Testcontainers for integration tests | Real backends in CI without external dependencies or manual setup | Pending validation |
+| Local backend/NuGet.Config with wildcard packageSourceMapping | Global NuGet config restricts package sources; local override clears mapping to allow xunit.v3, FluentAssertions, Microsoft.AspNetCore.OpenApi | Confirmed |
+| Storage.Gateway added as 13th src project | RESEARCH Pattern 6/Pitfall 3 requires Ocelot in its own ASP.NET Core host project | Confirmed |
+| Angular CLI 17.3.6 used instead of Angular 22 | Angular 22 not yet stable (RC only); Node 20.12.2 incompatible with Angular CLI 21+; Angular 17 produces identical workspace structure | Confirmed |
 
 ### Architecture Constraints Confirmed
 
@@ -86,7 +111,8 @@ Phase 10 [ ] E2E & Security Tests
 
 ### Todos
 
-- (none yet — project not started)
+- Plan 02: Domain core TDD (entities, value objects, events, state machine)
+- Plan 03: Docker Compose stack + Ocelot gateway (has checkpoint)
 
 ### Blockers
 
@@ -105,7 +131,9 @@ Phase 10 [ ] E2E & Security Tests
 
 **To resume work:** Read this file and `ROADMAP.md`. The current phase goal and success criteria in ROADMAP.md define what must be true before moving to the next phase.
 
-**Next action:** Run `/gsd:plan-phase 1` to decompose Phase 1 into executable plans.
+**Last session:** Completed Plan 01 (solution scaffold) on 2026-05-16. Stopped at: Plan 02 ready to execute.
+
+**Next action:** Execute 01-02-PLAN.md (Domain core: entities, value objects, events, state machine — TDD wave).
 
 ---
 

@@ -7,8 +7,8 @@
 
 ### Setup & Scaffolding
 
-- [ ] **SETUP-01**: Backend .NET 10 solution exists in `backend/` with all projects from §10.2 (`Storage.Domain`, `Storage.Application`, `Storage.Infrastructure.*`, `Storage.Api`, `Storage.Sdk`)
-- [ ] **SETUP-02**: Angular workspace exists in `frontend/` with a shared library project and a demo app
+- [x] **SETUP-01**: Backend .NET 10 solution exists in `backend/` with all projects from §10.2 (`Storage.Domain`, `Storage.Application`, `Storage.Infrastructure.*`, `Storage.Api`, `Storage.Sdk`)
+- [x] **SETUP-02**: Angular workspace exists in `frontend/` with a shared library project and a demo app
 - [ ] **SETUP-03**: Root `docker-compose.yml` brings up SQL Server, Redis, RabbitMQ, Keycloak, ClamAV, and the Storage API service
 - [ ] **SETUP-04**: Ocelot gateway project routes `/storage/v1/*` → Storage API and `/api/documents/*` → Documents API with JWT validation against Keycloak
 - [ ] **SETUP-05**: Developer can run the full local stack with `docker-compose up` and hit the Ocelot gateway on port 5000

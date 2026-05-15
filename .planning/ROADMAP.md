@@ -39,7 +39,7 @@
   4. `StorageKey` rejects keys that violate the `<tenantId>/<yyyy>/<mm>/<dd>/<uuid>` format; `Checksum` rejects non-SHA-256 hex strings and normalises lowercase.
   5. All six domain events are instantiable and carry their required fields as defined in `Storage.Domain`.
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] 01-01-PLAN.md — Backend .NET solution scaffold + Angular workspace + xUnit v3 test stubs (Wave 1)
@@ -221,7 +221,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Solution Scaffold & Domain Model | 0/3 | Planned | - |
+| 1. Solution Scaffold & Domain Model | 1/3 | In Progress|  |
 | 2. Application Layer & Port Interfaces | 0/? | Not started | - |
 | 3. Persistence Adapter | 0/? | Not started | - |
 | 4. Storage Adapters | 0/? | Not started | - |
