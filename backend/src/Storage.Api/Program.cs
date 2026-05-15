@@ -1,14 +1,10 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
+// Phase 1: stub health endpoint only.
+// Full API implementation is Phase 6.
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "storage-api" }))
+   .AllowAnonymous();
 
 app.Run();
