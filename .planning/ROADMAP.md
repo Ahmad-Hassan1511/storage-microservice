@@ -63,7 +63,7 @@ Plans:
   4. `UploadService.CompleteUploadAsync` transitions file status to `scanning` and publishes `file.uploaded` when the SHA-256 checksum matches; it rejects on mismatch.
   5. `DownloadService.GetFileAsync` returns a pre-signed download URL for `ready` files the caller is authorised to access; it returns an access-denied result for cross-tenant or insufficient-permission requests.
 
-**Plans:** 4 plans
+**Plans:** 1/4 plans executed
 
 Plans:
 - [ ] 02-01-PLAN.md — Port interfaces, Result type, CallerContext, integration events, shared DTOs, test project scaffold (Wave 1)
@@ -228,7 +228,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Solution Scaffold & Domain Model | 3/3 | Complete   | 2026-05-15 |
-| 2. Application Layer & Port Interfaces | 0/4 | Planning   | - |
+| 2. Application Layer & Port Interfaces | 1/4 | In Progress|  |
 | 3. Persistence Adapter | 0/? | Not started | - |
 | 4. Storage Adapters | 0/? | Not started | - |
 | 5. Cache & Messaging Adapters | 0/? | Not started | - |

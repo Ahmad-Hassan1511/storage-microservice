@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: Phase 1 — Solution Scaffold & Domain Model
-current_plan: Plan 03 — Docker Compose stack + Ocelot gateway (complete)
-status: phase-complete
-last_updated: "2026-05-16T00:20:00.000Z"
+current_phase: 2
+current_plan: 01 complete
+status: in-progress
+last_updated: "2026-05-15T23:18:52.364Z"
 progress:
   total_phases: 10
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 7
+  completed_plans: 4
   percent: 100
 ---
 
@@ -37,9 +37,9 @@ progress:
 
 ## Current Position
 
-**Current Phase:** Phase 1 — Solution Scaffold & Domain Model (COMPLETE)
-**Current Plan:** Plan 03 — Docker Compose stack + Ocelot gateway (COMPLETE)
-**Status:** Phase 1 complete — all 3 plans done; Phase 2 is next
+**Current Phase:** 2
+**Current Plan:** 01 complete
+**Status:** In-progress
 
 ```
 Progress: [██████████] 100%
@@ -69,12 +69,14 @@ Phase 10 [ ] E2E & Security Tests
 | Plans complete | 3 |
 | Phase 01-solution-scaffold-domain-model P02 | 4 | 2 tasks | 26 files |
 | Phase 01-solution-scaffold-domain-model P03 | 20 | 3 tasks | 9 files |
+| Phase 02-application-layer-port-interfaces P01 | 22 | 3 tasks | 31 files |
 
 ### Execution History
 
 | Phase-Plan | Duration | Tasks | Files |
 |------------|----------|-------|-------|
 | Phase 01-solution-scaffold-domain-model P01 | 50 min | 3 | 30 |
+| Phase 02-application-layer-port-interfaces P01 | 22 min | 3 | 31 |
 
 ---
 
@@ -99,6 +101,10 @@ Phase 10 [ ] E2E & Security Tests
 | Keycloak healthcheck via wget on management port 9000 | UBI-minimal image has no curl; management port 9000 is the correct health probe target; application port 8080 does not expose /health/ready | Confirmed |
 | ClamAV condition:service_started (not service_healthy) | Definition download takes 5-15 min on first boot; service_healthy would block storage-api startup unacceptably | Confirmed |
 | Docker build context is repo root for both Dockerfiles | Ensures all backend COPY paths work; both Dockerfiles reference backend/src/* paths consistently | Confirmed |
+| IntegrationEvent separate record hierarchy from DomainEvent | Message-bus transport must not leak domain concepts; separate namespace (Storage.Application.Events vs Storage.Domain.Events) | Confirmed |
+| IUnitOfWork exposes IFileCategoryRepository Categories sub-port | Keeps categories inside the unit-of-work transaction scope; resolves RESEARCH open question | Confirmed |
+| Storage.Application.csproj has zero PackageReferences | Application core depends only on BCL; RangeHeaderValue is System.Net.Http (BCL); no NuGet required | Confirmed |
+| FileListQuery pulled from Task 2b into Task 2a | IFileRepository.ListAsync forward-references FileListQuery; build would fail if kept in 2b | Confirmed |
 
 ### Architecture Constraints Confirmed
 
@@ -120,7 +126,7 @@ Phase 10 [ ] E2E & Security Tests
 
 ### Todos
 
-- Begin Phase 2: Application Layer & Port Interfaces
+- Execute Phase 2 Plan 02: UploadService
 
 ### Blockers
 
@@ -139,9 +145,9 @@ Phase 10 [ ] E2E & Security Tests
 
 **To resume work:** Read this file and `ROADMAP.md`. The current phase goal and success criteria in ROADMAP.md define what must be true before moving to the next phase.
 
-**Last session:** Completed Plan 03 (Docker Compose stack + Ocelot gateway) on 2026-05-16. Stopped at: Phase 1 complete.
+**Last session:** Completed Phase 2 Plan 01 (Application Layer Port Interfaces) on 2026-05-16. Stopped at: Completed 02-01-PLAN.md.
 
-**Next action:** Execute Phase 2 — Application Layer & Port Interfaces.
+**Next action:** Execute Phase 2 Plan 02 — UploadService.
 
 ---
 

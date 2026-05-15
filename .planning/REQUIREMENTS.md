@@ -24,7 +24,7 @@
 
 ### Application Layer
 
-- [ ] **APP-01**: `IFileStorageProvider`, `ICacheProvider`, `IEventBus`, `IUnitOfWork` port interfaces are defined in `Storage.Application/Abstractions/`
+- [x] **APP-01**: `IFileStorageProvider`, `ICacheProvider`, `IEventBus`, `IUnitOfWork` port interfaces are defined in `Storage.Application/Abstractions/`
 - [ ] **APP-02**: `UploadService.InitiateUploadAsync` validates against `FileCategory` policy (size, MIME, extension, allowed owner services) and returns `{ fileId, uploadUrl, uploadHeaders, expiresAt, proxyRequired, multipartRequired }`
 - [ ] **APP-03**: `UploadService.InitiateUploadAsync` enforces idempotency via `Idempotency-Key`; same key same payload returns same `FileId`; same key different payload returns 422
 - [ ] **APP-04**: `UploadService.CompleteUploadAsync` verifies SHA-256 checksum, transitions status to `scanning`, and publishes `file.uploaded`
