@@ -15,12 +15,12 @@
 
 ### Domain Model
 
-- [ ] **DOMAIN-01**: `File` entity implements the status state machine (`pending → scanning → ready | quarantined | deleted`); invalid transitions are rejected
-- [ ] **DOMAIN-02**: `FileCategory` entity holds all policy fields from §6.1 (`MaxSizeBytes`, `AllowedMimeTypes`, `AllowedExtensions`, `IsLargeFile`, `SupportsPreview`, `AntivirusRequired`, etc.) and exposes a `Validate(file)` method
-- [ ] **DOMAIN-03**: `StorageKey` value object enforces `<tenantId>/<yyyy>/<mm>/<dd>/<uuid>` format
-- [ ] **DOMAIN-04**: `Checksum` value object stores SHA-256 hex, normalises casing, and rejects malformed values
-- [ ] **DOMAIN-05**: `FileVersion`, `FilePermission`, `FileTag`, `AuditEntry` entities exist as owned collections of `File`
-- [ ] **DOMAIN-06**: Domain events (`FileCreatedEvent`, `FileUploadedEvent`, `FileScannedEvent`, `FileReadyEvent`, `FileDeletedEvent`, `FilePermissionChangedEvent`) are defined in `Storage.Domain`
+- [x] **DOMAIN-01**: `File` entity implements the status state machine (`pending → scanning → ready | quarantined | deleted`); invalid transitions are rejected
+- [x] **DOMAIN-02**: `FileCategory` entity holds all policy fields from §6.1 (`MaxSizeBytes`, `AllowedMimeTypes`, `AllowedExtensions`, `IsLargeFile`, `SupportsPreview`, `AntivirusRequired`, etc.) and exposes a `Validate(file)` method
+- [x] **DOMAIN-03**: `StorageKey` value object enforces `<tenantId>/<yyyy>/<mm>/<dd>/<uuid>` format
+- [x] **DOMAIN-04**: `Checksum` value object stores SHA-256 hex, normalises casing, and rejects malformed values
+- [x] **DOMAIN-05**: `FileVersion`, `FilePermission`, `FileTag`, `AuditEntry` entities exist as owned collections of `File`
+- [x] **DOMAIN-06**: Domain events (`FileCreatedEvent`, `FileUploadedEvent`, `FileScannedEvent`, `FileReadyEvent`, `FileDeletedEvent`, `FilePermissionChangedEvent`) are defined in `Storage.Domain`
 
 ### Application Layer
 

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 current_phase: Phase 1 — Solution Scaffold & Domain Model
-current_plan: Plan 02 (01-02-PLAN.md)
-status: In progress
-last_updated: "2026-05-16T00:50:00.000Z"
+current_plan: "Plan 02 — Domain core: entities, value objects, events, state machine"
+status: executing
+last_updated: "2026-05-15T21:58:05.239Z"
 progress:
   total_phases: 10
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 33
 ---
 
@@ -38,11 +38,11 @@ progress:
 ## Current Position
 
 **Current Phase:** Phase 1 — Solution Scaffold & Domain Model
-**Current Plan:** Plan 02 — Domain core: entities, value objects, events, state machine
-**Status:** In progress — Plan 01 complete, Plan 02 is next
+**Current Plan:** Plan 03 — Docker Compose stack + Ocelot gateway
+**Status:** In progress — Plans 01 and 02 complete, Plan 03 is next
 
 ```
-Progress: [███░░░░░░░] 33%
+Progress: [███████░░░] 67%
 
 Phase  1 [ ] Solution Scaffold & Domain Model
 Phase  2 [ ] Application Layer & Port Interfaces
@@ -67,6 +67,7 @@ Phase 10 [ ] E2E & Security Tests
 | Phases complete | 0/10 |
 | Plans written | 3 (Phase 1) |
 | Plans complete | 1 |
+| Phase 01-solution-scaffold-domain-model P02 | 4 | 2 tasks | 26 files |
 
 ### Execution History
 
@@ -90,6 +91,9 @@ Phase 10 [ ] E2E & Security Tests
 | Local backend/NuGet.Config with wildcard packageSourceMapping | Global NuGet config restricts package sources; local override clears mapping to allow xunit.v3, FluentAssertions, Microsoft.AspNetCore.OpenApi | Confirmed |
 | Storage.Gateway added as 13th src project | RESEARCH Pattern 6/Pitfall 3 requires Ocelot in its own ASP.NET Core host project | Confirmed |
 | Angular CLI 17.3.6 used instead of Angular 22 | Angular 22 not yet stable (RC only); Node 20.12.2 incompatible with Angular CLI 21+; Angular 17 produces identical workspace structure | Confirmed |
+| FileCategory.Validate() returns (bool, string?) tuple — does NOT throw | Intentionally different from File.Transition() which throws InvalidStatusTransitionException; validation returns result, state machine enforces invariants | Confirmed |
+| Storage.Domain.csproj has zero PackageReferences (pure BCL) | Architecture constraint: domain must have no infrastructure dependencies; validated in Plan 02 | Confirmed |
+| Exactly 6 domain event types; FilePreviewReadyEvent excluded | Per RESEARCH Pitfall 5 — preview events are Phase 1 out-of-scope | Confirmed |
 
 ### Architecture Constraints Confirmed
 
@@ -111,7 +115,6 @@ Phase 10 [ ] E2E & Security Tests
 
 ### Todos
 
-- Plan 02: Domain core TDD (entities, value objects, events, state machine)
 - Plan 03: Docker Compose stack + Ocelot gateway (has checkpoint)
 
 ### Blockers
@@ -131,9 +134,9 @@ Phase 10 [ ] E2E & Security Tests
 
 **To resume work:** Read this file and `ROADMAP.md`. The current phase goal and success criteria in ROADMAP.md define what must be true before moving to the next phase.
 
-**Last session:** Completed Plan 01 (solution scaffold) on 2026-05-16. Stopped at: Plan 02 ready to execute.
+**Last session:** Completed Plan 02 (domain core TDD) on 2026-05-16. Stopped at: Plan 03 ready to execute.
 
-**Next action:** Execute 01-02-PLAN.md (Domain core: entities, value objects, events, state machine — TDD wave).
+**Next action:** Execute 01-03-PLAN.md (Docker Compose stack + Ocelot gateway — has checkpoint).
 
 ---
 
