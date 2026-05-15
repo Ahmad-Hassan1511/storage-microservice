@@ -120,4 +120,44 @@ public class File : EntityBase
 
         return file;
     }
+
+    /// <summary>
+    /// Rehydration factory for persistence adapters and test fixtures.
+    /// Creates a File in any status with StorageKey and Permissions pre-populated.
+    /// </summary>
+    public static File Rehydrate(
+        Guid id,
+        Guid tenantId,
+        string ownerService,
+        string categoryId,
+        string originalFileName,
+        string mimeType,
+        long sizeBytes,
+        FileStatus status,
+        StorageKey storageKey,
+        Visibility visibility,
+        DateTime createdAt,
+        IEnumerable<FilePermission>? permissions = null)
+    {
+        var file = new File
+        {
+            Id = id,
+            TenantId = tenantId,
+            OwnerService = ownerService,
+            CategoryId = categoryId,
+            OriginalFileName = originalFileName,
+            MimeType = mimeType,
+            SizeBytes = sizeBytes,
+            _status = status,
+            StorageKey = storageKey,
+            Visibility = visibility,
+            CreatedAt = createdAt,
+            UpdatedAt = createdAt
+        };
+
+        if (permissions is not null)
+            file._permissions.AddRange(permissions);
+
+        return file;
+    }
 }
