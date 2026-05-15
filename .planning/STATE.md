@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 current_phase: Phase 1 — Solution Scaffold & Domain Model
-current_plan: "Plan 02 — Domain core: entities, value objects, events, state machine"
-status: executing
-last_updated: "2026-05-15T21:58:05.239Z"
+current_plan: Plan 03 — Docker Compose stack + Ocelot gateway (complete)
+status: phase-complete
+last_updated: "2026-05-16T00:20:00.000Z"
 progress:
   total_phases: 10
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
-  percent: 33
+  completed_plans: 3
+  percent: 100
 ---
 
 # Project State: Storage Microservice
@@ -37,14 +37,14 @@ progress:
 
 ## Current Position
 
-**Current Phase:** Phase 1 — Solution Scaffold & Domain Model
-**Current Plan:** Plan 03 — Docker Compose stack + Ocelot gateway
-**Status:** In progress — Plans 01 and 02 complete, Plan 03 is next
+**Current Phase:** Phase 1 — Solution Scaffold & Domain Model (COMPLETE)
+**Current Plan:** Plan 03 — Docker Compose stack + Ocelot gateway (COMPLETE)
+**Status:** Phase 1 complete — all 3 plans done; Phase 2 is next
 
 ```
-Progress: [███████░░░] 67%
+Progress: [██████████] 100%
 
-Phase  1 [ ] Solution Scaffold & Domain Model
+Phase  1 [x] Solution Scaffold & Domain Model
 Phase  2 [ ] Application Layer & Port Interfaces
 Phase  3 [ ] Persistence Adapter
 Phase  4 [ ] Storage Adapters
@@ -64,10 +64,11 @@ Phase 10 [ ] E2E & Security Tests
 |--------|-------|
 | Phases defined | 10 |
 | Requirements mapped | 95/95 |
-| Phases complete | 0/10 |
+| Phases complete | 1/10 |
 | Plans written | 3 (Phase 1) |
-| Plans complete | 1 |
+| Plans complete | 3 |
 | Phase 01-solution-scaffold-domain-model P02 | 4 | 2 tasks | 26 files |
+| Phase 01-solution-scaffold-domain-model P03 | 20 | 3 tasks | 9 files |
 
 ### Execution History
 
@@ -94,6 +95,10 @@ Phase 10 [ ] E2E & Security Tests
 | FileCategory.Validate() returns (bool, string?) tuple — does NOT throw | Intentionally different from File.Transition() which throws InvalidStatusTransitionException; validation returns result, state machine enforces invariants | Confirmed |
 | Storage.Domain.csproj has zero PackageReferences (pure BCL) | Architecture constraint: domain must have no infrastructure dependencies; validated in Plan 02 | Confirmed |
 | Exactly 6 domain event types; FilePreviewReadyEvent excluded | Per RESEARCH Pitfall 5 — preview events are Phase 1 out-of-scope | Confirmed |
+| Ocelot 24.1.0 stable (not beta 25.x) for Storage.Gateway | net8.0 TFM backward compat works on .NET 10 runtime with zero NU1701 warnings; beta not appropriate | Confirmed |
+| Keycloak healthcheck via wget on management port 9000 | UBI-minimal image has no curl; management port 9000 is the correct health probe target; application port 8080 does not expose /health/ready | Confirmed |
+| ClamAV condition:service_started (not service_healthy) | Definition download takes 5-15 min on first boot; service_healthy would block storage-api startup unacceptably | Confirmed |
+| Docker build context is repo root for both Dockerfiles | Ensures all backend COPY paths work; both Dockerfiles reference backend/src/* paths consistently | Confirmed |
 
 ### Architecture Constraints Confirmed
 
@@ -115,7 +120,7 @@ Phase 10 [ ] E2E & Security Tests
 
 ### Todos
 
-- Plan 03: Docker Compose stack + Ocelot gateway (has checkpoint)
+- Begin Phase 2: Application Layer & Port Interfaces
 
 ### Blockers
 
@@ -134,9 +139,9 @@ Phase 10 [ ] E2E & Security Tests
 
 **To resume work:** Read this file and `ROADMAP.md`. The current phase goal and success criteria in ROADMAP.md define what must be true before moving to the next phase.
 
-**Last session:** Completed Plan 02 (domain core TDD) on 2026-05-16. Stopped at: Plan 03 ready to execute.
+**Last session:** Completed Plan 03 (Docker Compose stack + Ocelot gateway) on 2026-05-16. Stopped at: Phase 1 complete.
 
-**Next action:** Execute 01-03-PLAN.md (Docker Compose stack + Ocelot gateway — has checkpoint).
+**Next action:** Execute Phase 2 — Application Layer & Port Interfaces.
 
 ---
 

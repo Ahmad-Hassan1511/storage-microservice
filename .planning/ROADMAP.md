@@ -9,7 +9,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Solution Scaffold & Domain Model** - Working .NET solution with project references, Docker Compose stack, and a fully validated domain core
+- [x] **Phase 1: Solution Scaffold & Domain Model** - Working .NET solution with project references, Docker Compose stack, and a fully validated domain core (completed 2026-05-15)
 - [ ] **Phase 2: Application Layer & Port Interfaces** - All use-case services and port interfaces implemented; no infrastructure dependency
 - [ ] **Phase 3: Persistence Adapter** - EF Core SQL Server adapter fulfils the persistence port with migrations, seeder, and soft-delete query filter
 - [ ] **Phase 4: Storage Adapters** - FileSystem, Wasabi, and Azure Blob adapters implement the storage port; adapter selection driven by config
@@ -39,7 +39,7 @@
   4. `StorageKey` rejects keys that violate the `<tenantId>/<yyyy>/<mm>/<dd>/<uuid>` format; `Checksum` rejects non-SHA-256 hex strings and normalises lowercase.
   5. All six domain events are instantiable and carry their required fields as defined in `Storage.Domain`.
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 01-01-PLAN.md — Backend .NET solution scaffold + Angular workspace + xUnit v3 test stubs (Wave 1)
@@ -221,7 +221,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Solution Scaffold & Domain Model | 2/3 | In Progress|  |
+| 1. Solution Scaffold & Domain Model | 3/3 | Complete   | 2026-05-15 |
 | 2. Application Layer & Port Interfaces | 0/? | Not started | - |
 | 3. Persistence Adapter | 0/? | Not started | - |
 | 4. Storage Adapters | 0/? | Not started | - |
