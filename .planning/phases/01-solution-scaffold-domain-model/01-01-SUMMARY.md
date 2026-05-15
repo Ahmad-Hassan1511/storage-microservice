@@ -179,5 +179,21 @@ None - no external service configuration required for this scaffolding plan.
 - All 14 projects are members of StorageService.sln
 
 ---
+
+## Self-Check: PASSED
+
+| Check | Result |
+|-------|--------|
+| `dotnet build StorageService.sln -warnaserror` | PASS — 0 warnings, 0 errors, 14 DLLs emitted |
+| `dotnet test Storage.Domain.Tests` | PASS — 0 tests (Wave 0 stubs, correct) |
+| Storage.Domain has zero Infrastructure ProjectReferences | PASS — .csproj has no ItemGroup/ProjectReference |
+| Storage.Application has zero Infrastructure ProjectReferences | PASS — only references Storage.Domain |
+| Guard smoke test (forbidden ref → build fails) | PASS — Domain→Infrastructure.Cache.InMemory causes MSB4006 circular dependency error (enforcement is stronger than expected: cycle detection fires before target, but the violation is rejected) |
+| `frontend/angular.json` exists | PASS |
+| `frontend/projects/demo-app/` exists | PASS |
+| `frontend/projects/shared-lib/` exists | PASS |
+| 6 stub test files exist | PASS |
+| Commits 36371b5, 4acb7c8, d43e67c, 17efa9b exist | PASS |
+
 *Phase: 01-solution-scaffold-domain-model*
 *Completed: 2026-05-16*
