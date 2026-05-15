@@ -63,6 +63,29 @@ public class File : EntityBase
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void SetOriginalFileName(string originalFileName)
+    {
+        if (string.IsNullOrWhiteSpace(originalFileName))
+            throw new ArgumentException("OriginalFileName cannot be blank.", nameof(originalFileName));
+        OriginalFileName = originalFileName;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetVisibility(Visibility visibility)
+    {
+        Visibility = visibility;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateTags(Dictionary<string, string> tags)
+    {
+        ArgumentNullException.ThrowIfNull(tags);
+        _tags.Clear();
+        foreach (var (key, value) in tags)
+            _tags.Add(new FileTag(key, value));
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public static File Create(
         Guid tenantId,
         string ownerService,
