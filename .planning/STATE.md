@@ -11,7 +11,7 @@ progress:
   completed_phases: 1
   total_plans: 7
   completed_plans: 4
-  percent: 100
+  percent: 57
 ---
 
 # Project State: Storage Microservice
@@ -42,7 +42,7 @@ progress:
 **Status:** In-progress
 
 ```
-Progress: [██████████] 100%
+Progress: [██████░░░░] 57%
 
 Phase  1 [x] Solution Scaffold & Domain Model
 Phase  2 [ ] Application Layer & Port Interfaces
