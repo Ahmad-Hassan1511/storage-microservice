@@ -30,7 +30,7 @@
 - [ ] **APP-04**: `UploadService.CompleteUploadAsync` verifies SHA-256 checksum, transitions status to `scanning`, and publishes `file.uploaded`
 - [x] **APP-05**: `DownloadService.GetFileAsync` authorises caller (service-level + user-level ACL), reads metadata (cache-first), and returns a fresh pre-signed download URL (or CDN URL for public files)
 - [x] **APP-06**: `DownloadService.GetFileStreamAsync` proxies bytes for the audited download path (when `proxyRequired=true`)
-- [ ] **APP-07**: `FileManagementService` handles metadata patch, soft delete, hard delete (admin scope), version creation, listing with cursor-based pagination, and share link generation
+- [x] **APP-07**: `FileManagementService` handles metadata patch, soft delete, hard delete (admin scope), version creation, listing with cursor-based pagination, and share link generation
 
 ### Persistence Adapter
 
