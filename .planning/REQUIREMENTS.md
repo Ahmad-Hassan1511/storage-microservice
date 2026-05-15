@@ -28,8 +28,8 @@
 - [ ] **APP-02**: `UploadService.InitiateUploadAsync` validates against `FileCategory` policy (size, MIME, extension, allowed owner services) and returns `{ fileId, uploadUrl, uploadHeaders, expiresAt, proxyRequired, multipartRequired }`
 - [ ] **APP-03**: `UploadService.InitiateUploadAsync` enforces idempotency via `Idempotency-Key`; same key same payload returns same `FileId`; same key different payload returns 422
 - [ ] **APP-04**: `UploadService.CompleteUploadAsync` verifies SHA-256 checksum, transitions status to `scanning`, and publishes `file.uploaded`
-- [ ] **APP-05**: `DownloadService.GetFileAsync` authorises caller (service-level + user-level ACL), reads metadata (cache-first), and returns a fresh pre-signed download URL (or CDN URL for public files)
-- [ ] **APP-06**: `DownloadService.GetFileStreamAsync` proxies bytes for the audited download path (when `proxyRequired=true`)
+- [x] **APP-05**: `DownloadService.GetFileAsync` authorises caller (service-level + user-level ACL), reads metadata (cache-first), and returns a fresh pre-signed download URL (or CDN URL for public files)
+- [x] **APP-06**: `DownloadService.GetFileStreamAsync` proxies bytes for the audited download path (when `proxyRequired=true`)
 - [ ] **APP-07**: `FileManagementService` handles metadata patch, soft delete, hard delete (admin scope), version creation, listing with cursor-based pagination, and share link generation
 
 ### Persistence Adapter
