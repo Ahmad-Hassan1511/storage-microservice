@@ -63,6 +63,13 @@ public class File : EntityBase
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void SetStorageDetails(ValueObjects.StorageKey key, ValueObjects.Checksum checksum)
+    {
+        StorageKey = key;
+        Checksum = checksum;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void SetOriginalFileName(string originalFileName)
     {
         if (string.IsNullOrWhiteSpace(originalFileName))

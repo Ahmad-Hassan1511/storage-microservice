@@ -8,6 +8,8 @@ public class FileCategory
     public string[] AllowedMimeTypes { get; set; } = [];
     public string[] AllowedExtensions { get; set; } = [];
     public bool IsLargeFile { get; set; }
+    public long? MultipartThresholdBytes { get; set; }
+    public string[] AllowedOwnerServices { get; set; } = [];
     public bool SupportsPreview { get; set; }
     public bool AntivirusRequired { get; set; }
     public bool RequiresAiValidation { get; set; }
