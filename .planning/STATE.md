@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 current_phase: 3
-current_plan: pending
+current_plan: 1
 status: In-progress
-last_updated: "2026-05-16T06:00:00.000Z"
+last_updated: "2026-05-16T01:00:00.000Z"
 progress:
   total_phases: 10
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
-  percent: 20
+  total_plans: 8
+  completed_plans: 8
+  percent: 22
 ---
 
 # Project State: Storage Microservice
@@ -38,15 +38,15 @@ progress:
 ## Current Position
 
 **Current Phase:** 3
-**Current Plan:** pending
+**Current Plan:** 1 (complete)
 **Status:** In-progress
 
 ```
-Progress: [██░░░░░░░░] 20%
+Progress: [██░░░░░░░░] 22%
 
 Phase  1 [x] Solution Scaffold & Domain Model
 Phase  2 [x] Application Layer & Port Interfaces
-Phase  3 [ ] Persistence Adapter
+Phase  3 [~] Persistence Adapter (Plan 01 complete)
 Phase  4 [ ] Storage Adapters
 Phase  5 [ ] Cache & Messaging Adapters
 Phase  6 [ ] REST API Layer
@@ -107,6 +107,7 @@ Phase 10 [ ] E2E & Security Tests
 | IUnitOfWork exposes IFileCategoryRepository Categories sub-port | Keeps categories inside the unit-of-work transaction scope; resolves RESEARCH open question | Confirmed |
 | Storage.Application.csproj has zero PackageReferences | Application core depends only on BCL; RangeHeaderValue is System.Net.Http (BCL); no NuGet required | Confirmed |
 | FileListQuery pulled from Task 2b into Task 2a | IFileRepository.ListAsync forward-references FileListQuery; build would fail if kept in 2b | Confirmed |
+| dotnet-ef 9.0.4 used for migration generation (10.0.8 blocked) | Global NuGet packageSourceMapping excludes dotnet-ef tool pattern; 9.0.4 generates correct EF Core 10 migrations with advisory warning only | Confirmed |
 
 ### Architecture Constraints Confirmed
 
@@ -128,7 +129,7 @@ Phase 10 [ ] E2E & Security Tests
 
 ### Todos
 
-- Plan and execute Phase 3: Persistence Adapter (EF Core, SQL Server, repositories, migrations)
+- Execute remaining Phase 3 plans (integration tests for persistence adapter)
 
 ### Blockers
 
@@ -147,9 +148,11 @@ Phase 10 [ ] E2E & Security Tests
 
 **To resume work:** Read this file and `ROADMAP.md`. The current phase goal and success criteria in ROADMAP.md define what must be true before moving to the next phase.
 
-**Last session:** 2026-05-15T23:34:27.137Z
+**Last session:** 2026-05-16T01:00:00.000Z
 
-**Next action:** Plan and execute Phase 3 — Persistence Adapter.
+**Stopped at:** Completed 03-persistence-adapter-01-PLAN.md
+
+**Next action:** Continue Phase 3 — remaining persistence adapter plans.
 
 ---
 
