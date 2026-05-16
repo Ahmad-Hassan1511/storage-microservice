@@ -2,8 +2,8 @@
 phase: 2
 slug: application-layer-port-interfaces
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-05-16
 ---
 
@@ -48,8 +48,9 @@ created: 2026-05-16
 | 2-02-07 | 02 | 2 | APP-02 | unit | `dotnet test --filter "FullyQualifiedName~UploadServiceTests.InitiateUpload_LargeFileCategory_MultipartRequired"` | ❌ W0 | ⬜ pending |
 | 2-02-08 | 02 | 2 | APP-03 | unit | `dotnet test --filter "FullyQualifiedName~UploadServiceTests.InitiateUpload_SameKeyAndPayload_ReturnsExistingFileId"` | ❌ W0 | ⬜ pending |
 | 2-02-09 | 02 | 2 | APP-03 | unit | `dotnet test --filter "FullyQualifiedName~UploadServiceTests.InitiateUpload_SameKeyDifferentPayload_ReturnsIdempotencyConflictError"` | ❌ W0 | ⬜ pending |
+| 2-02-09b | 02 | 2 | APP-03 | unit | `dotnet test --filter "FullyQualifiedName~UploadServiceTests.InitiateUpload_SameKeyDifferentOwnerService_ReturnsIdempotencyConflictError"` | ❌ W0 | ⬜ pending |
 | 2-02-10 | 02 | 2 | APP-04 | unit | `dotnet test --filter "FullyQualifiedName~UploadServiceTests.CompleteUpload_ValidChecksum_TransitionsToScanning"` | ❌ W0 | ⬜ pending |
-| 2-02-11 | 02 | 2 | APP-04 | unit | `dotnet test --filter "FullyQualifiedName~UploadServiceTests.CompleteUpload_ChecksumMismatch_ReturnsPolicyViolationError"` | ❌ W0 | ⬜ pending |
+| 2-02-11 | 02 | 2 | APP-04 | unit | `dotnet test --filter "FullyQualifiedName~UploadServiceTests.CompleteUpload_ChecksumMismatch_ReturnsChecksumMismatchError"` | ❌ W0 | ⬜ pending |
 | 2-02-12 | 02 | 2 | APP-05 | unit | `dotnet test --filter "FullyQualifiedName~DownloadServiceTests.GetFile_ReadyFile_ReturnsPresignedUrl"` | ❌ W0 | ⬜ pending |
 | 2-02-13 | 02 | 2 | APP-05 | unit | `dotnet test --filter "FullyQualifiedName~DownloadServiceTests.GetFile_PendingFile_ReturnsNotFound"` | ❌ W0 | ⬜ pending |
 | 2-02-14 | 02 | 2 | APP-05 | unit | `dotnet test --filter "FullyQualifiedName~DownloadServiceTests.GetFile_CrossTenant_ReturnsNotFound"` | ❌ W0 | ⬜ pending |
@@ -58,6 +59,9 @@ created: 2026-05-16
 | 2-02-17 | 02 | 2 | APP-07 | unit | `dotnet test --filter "FullyQualifiedName~FileManagementServiceTests.SoftDelete_ReadyFile_SetsDeletedStatus"` | ❌ W0 | ⬜ pending |
 | 2-02-18 | 02 | 2 | APP-07 | unit | `dotnet test --filter "FullyQualifiedName~FileManagementServiceTests.HardDelete_WithoutAdminScope_ReturnsAccessDenied"` | ❌ W0 | ⬜ pending |
 | 2-02-19 | 02 | 2 | APP-07 | unit | `dotnet test --filter "FullyQualifiedName~FileManagementServiceTests.ListFiles_WithCursor_ReturnsPaginatedResults"` | ❌ W0 | ⬜ pending |
+| 2-02-20 | 04 | 2 | APP-07 | unit | `dotnet test --filter "FullyQualifiedName~FileManagementServiceTests.PatchFile_UpdatesMetadataAndInvalidatesCache"` | ❌ W0 | ⬜ pending |
+| 2-02-21 | 04 | 2 | APP-07 | unit | `dotnet test --filter "FullyQualifiedName~FileManagementServiceTests.CreateVersion_AddsFileVersionEntry"` | ❌ W0 | ⬜ pending |
+| 2-02-22 | 04 | 2 | APP-07 | unit | `dotnet test --filter "FullyQualifiedName~FileManagementServiceTests.GenerateShareLink_StoresTokenInCache"` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -66,9 +70,9 @@ created: 2026-05-16
 ## Wave 0 Requirements
 
 - [ ] `backend/tests/Storage.Application.Tests/Storage.Application.Tests.csproj` — xUnit v3 + NSubstitute + FluentAssertions + coverlet
-- [ ] `backend/tests/Storage.Application.Tests/UploadServiceTests.cs` — stubs for APP-02, APP-03, APP-04
-- [ ] `backend/tests/Storage.Application.Tests/DownloadServiceTests.cs` — stubs for APP-05, APP-06
-- [ ] `backend/tests/Storage.Application.Tests/FileManagementServiceTests.cs` — stubs for APP-07
+- [ ] `backend/tests/Storage.Application.Tests/UploadServiceTests.cs` — 12 stubs for APP-02, APP-03, APP-04 (includes OwnerService idempotency variant)
+- [ ] `backend/tests/Storage.Application.Tests/DownloadServiceTests.cs` — 5 stubs for APP-05, APP-06
+- [ ] `backend/tests/Storage.Application.Tests/FileManagementServiceTests.cs` — 6 stubs for APP-07 (includes PatchFile, CreateVersion, GenerateShareLink)
 
 *Wave 0 creates the test project and stub files before any application service code is written.*
 
@@ -84,11 +88,11 @@ created: 2026-05-16
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s
+- [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending

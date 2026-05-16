@@ -28,6 +28,9 @@ public sealed class SoftDeleteInterceptor : SaveChangesInterceptor
         foreach (var entry in context.ChangeTracker.Entries<DomainFile>()
             .Where(e => e.State == EntityState.Deleted))
         {
+            var alreadySoftDeleted = entry.Property("DeletedAt").CurrentValue is not null;
+            if (alreadySoftDeleted) continue;  // hard delete: skip interception
+
             entry.State = EntityState.Modified;
             entry.Property("DeletedAt").CurrentValue = now;
             entry.Property("UpdatedAt").CurrentValue = now;

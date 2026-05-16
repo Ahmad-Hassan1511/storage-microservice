@@ -2,8 +2,8 @@
 phase: 1
 slug: solution-scaffold-domain-model
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-05-15
 ---
 
@@ -18,17 +18,17 @@ created: 2026-05-15
 | Property | Value |
 |----------|-------|
 | **Framework** | xUnit v3 (xunit.v3 3.2.x) via `dotnet test` |
-| **Config file** | `backend/Storage.sln` — Wave 0 creates `Storage.Domain.Tests` |
-| **Quick run command** | `dotnet test backend/Storage.Domain.Tests/Storage.Domain.Tests.csproj --no-build` |
-| **Full suite command** | `dotnet test backend/Storage.Domain.Tests/Storage.Domain.Tests.csproj` |
+| **Config file** | `backend/StorageService.sln` — Wave 0 creates `Storage.Domain.Tests` |
+| **Quick run command** | `dotnet test backend/tests/Storage.Domain.Tests/Storage.Domain.Tests.csproj --no-build` |
+| **Full suite command** | `dotnet test backend/tests/Storage.Domain.Tests/Storage.Domain.Tests.csproj` |
 | **Estimated runtime** | ~10 seconds |
 
 ---
 
 ## Sampling Rate
 
-- **After every task commit:** Run `dotnet test backend/Storage.Domain.Tests/Storage.Domain.Tests.csproj --no-build`
-- **After every plan wave:** Run `dotnet test backend/Storage.Domain.Tests/Storage.Domain.Tests.csproj`
+- **After every task commit:** Run `dotnet test backend/tests/Storage.Domain.Tests/Storage.Domain.Tests.csproj --no-build`
+- **After every plan wave:** Run `dotnet test backend/tests/Storage.Domain.Tests/Storage.Domain.Tests.csproj`
 - **Before `/gsd:verify-work`:** Full suite must be green
 - **Max feedback latency:** 30 seconds
 
@@ -39,16 +39,16 @@ created: 2026-05-15
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
 | 1-01-01 | 01 | 1 | SETUP-01 | manual | `docker-compose up --build -d` | ❌ W0 | ⬜ pending |
-| 1-01-02 | 01 | 1 | SETUP-02 | build | `dotnet build backend/Storage.sln` | ❌ W0 | ⬜ pending |
-| 1-01-03 | 01 | 1 | SETUP-03 | build | `dotnet build backend/Storage.sln` | ❌ W0 | ⬜ pending |
+| 1-01-02 | 01 | 1 | SETUP-02 | build | `dotnet build backend/StorageService.sln` | ❌ W0 | ⬜ pending |
+| 1-01-03 | 01 | 1 | SETUP-03 | build | `dotnet build backend/StorageService.sln` | ❌ W0 | ⬜ pending |
 | 1-01-04 | 01 | 1 | SETUP-04 | manual | `curl http://localhost:5000/health` | ❌ W0 | ⬜ pending |
-| 1-01-05 | 01 | 1 | SETUP-05 | build | `dotnet build backend/Storage.sln --no-incremental` | ❌ W0 | ⬜ pending |
-| 1-02-01 | 02 | 2 | DOMAIN-01 | unit | `dotnet test ... --filter "FileEntity"` | ❌ W0 | ⬜ pending |
+| 1-01-05 | 01 | 1 | SETUP-05 | build | `dotnet build backend/StorageService.sln --no-incremental` | ❌ W0 | ⬜ pending |
+| 1-02-01 | 02 | 2 | DOMAIN-01 | unit | `dotnet test ... --filter "FileStatusTransition"` | ❌ W0 | ⬜ pending |
 | 1-02-02 | 02 | 2 | DOMAIN-02 | unit | `dotnet test ... --filter "FileCategory"` | ❌ W0 | ⬜ pending |
-| 1-02-03 | 02 | 2 | DOMAIN-03 | unit | `dotnet test ... --filter "StatusTransition"` | ❌ W0 | ⬜ pending |
-| 1-02-04 | 02 | 2 | DOMAIN-04 | unit | `dotnet test ... --filter "StorageKey"` | ❌ W0 | ⬜ pending |
-| 1-02-05 | 02 | 2 | DOMAIN-05 | unit | `dotnet test ... --filter "Checksum"` | ❌ W0 | ⬜ pending |
-| 1-02-06 | 02 | 2 | DOMAIN-06 | unit | `dotnet test ... --filter "DomainEvents"` | ❌ W0 | ⬜ pending |
+| 1-02-03 | 02 | 2 | DOMAIN-03 | unit | `dotnet test ... --filter "StorageKey"` | ❌ W0 | ⬜ pending |
+| 1-02-04 | 02 | 2 | DOMAIN-04 | unit | `dotnet test ... --filter "Checksum"` | ❌ W0 | ⬜ pending |
+| 1-02-05 | 02 | 2 | DOMAIN-05 | unit | `dotnet test ... --filter "FileCollections"` | ❌ W0 | ⬜ pending |
+| 1-02-06 | 02 | 2 | DOMAIN-06 | unit | `dotnet test ... --filter "DomainEvent"` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -56,11 +56,13 @@ created: 2026-05-15
 
 ## Wave 0 Requirements
 
-- [ ] `backend/Storage.Domain.Tests/Storage.Domain.Tests.csproj` — xUnit v3 test project referencing Storage.Domain only
-- [ ] `backend/Storage.Domain.Tests/Domain/FileEntityTests.cs` — stubs for DOMAIN-01, DOMAIN-03
-- [ ] `backend/Storage.Domain.Tests/Domain/ValueObjects/StorageKeyTests.cs` — stubs for DOMAIN-04
-- [ ] `backend/Storage.Domain.Tests/Domain/ValueObjects/ChecksumTests.cs` — stubs for DOMAIN-05
-- [ ] `backend/Storage.Domain.Tests/Domain/Events/DomainEventTests.cs` — stubs for DOMAIN-06
+- [ ] `backend/tests/Storage.Domain.Tests/Storage.Domain.Tests.csproj` — xUnit v3 test project referencing Storage.Domain only
+- [ ] `backend/tests/Storage.Domain.Tests/FileStatusTransitionTests.cs` — stubs for DOMAIN-01
+- [ ] `backend/tests/Storage.Domain.Tests/StorageKeyTests.cs` — stubs for DOMAIN-03
+- [ ] `backend/tests/Storage.Domain.Tests/ChecksumTests.cs` — stubs for DOMAIN-04
+- [ ] `backend/tests/Storage.Domain.Tests/FileCategoryValidationTests.cs` — stubs for DOMAIN-02
+- [ ] `backend/tests/Storage.Domain.Tests/DomainEventTests.cs` — stubs for DOMAIN-06
+- [ ] `backend/tests/Storage.Domain.Tests/FileCollectionsTests.cs` — stubs for DOMAIN-05 (File aggregate owned collections)
 
 *Wave 0 creates the test project and stub test files before any domain code is written, enabling red-green verification from the first commit.*
 

@@ -80,6 +80,8 @@ public class FileConfiguration : IEntityTypeConfiguration<DomainFile>
         b.HasIndex(f => new { f.TenantId, f.OwnerService });
         b.HasIndex(f => new { f.TenantId, f.CategoryId });
 
+        b.Property<byte[]>("RowVersion").IsRowVersion();
+
         b.Ignore(f => f.DomainEvents);
     }
 }

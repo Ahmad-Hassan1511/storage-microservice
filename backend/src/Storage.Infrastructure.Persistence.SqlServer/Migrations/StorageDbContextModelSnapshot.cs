@@ -111,6 +111,11 @@ namespace Storage.Infrastructure.Persistence.SqlServer.Migrations
                     b.Property<Guid?>("PreviewFileId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<long>("SizeBytes")
                         .HasColumnType("bigint");
 
