@@ -8,7 +8,7 @@ export default defineConfig({
   workers: 1,
   reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
   use: {
-    baseURL: process.env['API_BASE_URL'] ?? 'http://localhost:5100',
+    baseURL: process.env['APP_BASE_URL'] ?? 'http://localhost:4200',
     trace: 'on-first-retry',
   },
   projects: [

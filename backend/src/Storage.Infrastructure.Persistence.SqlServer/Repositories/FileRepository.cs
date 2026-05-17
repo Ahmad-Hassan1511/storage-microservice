@@ -44,7 +44,7 @@ internal sealed class FileRepository : IFileRepository
         return await q
             .OrderByDescending(f => f.CreatedAt)
             .ThenByDescending(f => f.Id)
-            .Take(query.PageSize)
+            .Take(query.PageSize + 1)   // +1 lets ListFilesAsync detect hasMore
             .ToListAsync(ct);
     }
 
