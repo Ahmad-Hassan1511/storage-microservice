@@ -67,7 +67,37 @@ export class FileApiService {
     });
   }
 
+  proxyUpload(fileId: string, file: File, contentType: string): Observable<void> {
+    return this.http.put<void>(`${this.base}/files/${fileId}`, file, {
+      headers: { 'Content-Type': contentType },
+    });
+  }
+
   getFile(fileId: string): Observable<StoredFile> {
     return this.http.get<StoredFile>(`${this.base}/files/${fileId}`);
+  }
+
+  listFiles(params?: {
+    ownerService?: string;
+    categoryId?: string;
+    cursor?: string;
+    pageSize?: number;
+  }): Observable<{ items: StoredFile[]; nextCursor: string | null; totalCount: number | null }> {
+    const p: Record<string, string> = {};
+    if (params?.ownerService) p['ownerService'] = params.ownerService;
+    if (params?.categoryId) p['categoryId'] = params.categoryId;
+    if (params?.cursor) p['cursor'] = params.cursor;
+    if (params?.pageSize != null) p['pageSize'] = String(params.pageSize);
+    return this.http.get<{ items: StoredFile[]; nextCursor: string | null; totalCount: number | null }>(
+      `${this.base}/files`, { params: p }
+    );
+  }
+
+  deleteFile(fileId: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/files/${fileId}`);
+  }
+
+  markReady(fileId: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/dev/files/${fileId}/mark-ready`, {});
   }
 }

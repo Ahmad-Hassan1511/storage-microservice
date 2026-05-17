@@ -1,0 +1,13 @@
+{
+  "/v1": {
+    "target": "http://localhost:5170",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
+  },
+  "/openapi": {
+    "target": "http://localhost:5170",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

@@ -16,7 +16,7 @@
     "moduleResolution": "node",
     "paths": {
       "shared-lib": [
-        "./dist/shared-lib"
+        "./projects/shared-lib/src/public-api"
       ]
     },
     "importHelpers": true,

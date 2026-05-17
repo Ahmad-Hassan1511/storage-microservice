@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
             });
         });
 
-        services.AddSingleton<IEventBus, AzureServiceBusEventBus>();
+        services.AddScoped<IEventBus, AzureServiceBusEventBus>();
         return services;
     }
 }

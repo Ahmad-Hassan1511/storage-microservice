@@ -1,22 +1,27 @@
-using Storage.Application.Abstractions;
-using Storage.Application.Common;
-using Storage.Application.DTOs;
-using Storage.Application.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using Storage.Infrastructure.Cache.InMemory;
 using Storage.Infrastructure.Cache.Redis;
 using Storage.Infrastructure.Messaging.AzureServiceBus;
 using Storage.Infrastructure.Messaging.RabbitMQ;
+using Storage.Infrastructure.Persistence.SqlServer;
 using Storage.Infrastructure.Persistence.SqlServer.Extensions;
 using Storage.Infrastructure.Persistence.SqlServer.Seeders;
 using Storage.Infrastructure.Storage.AzureBlob;
 using Storage.Infrastructure.Storage.FileSystem;
 using Storage.Infrastructure.Storage.Wasabi;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Storage.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // OpenAPI
 builder.Services.AddOpenApi();
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddOpenApi("dev");
+
+// Controllers
+builder.Services.AddControllers();
 
 // Auth
 var authAuthority = builder.Configuration["Auth:Authority"];
@@ -54,7 +59,7 @@ builder.Services.AddScoped<FileManagementService>();
 
 // Persistence
 var connStr = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Server=localhost,1433;Database=StorageDb;User Id=sa;Password=Storage@2024!;TrustServerCertificate=true";
+    ?? "Server=localhost,1433;Database=StorageDb;User Id=sa;Password=Dev@123456;TrustServerCertificate=true";
 builder.Services.AddSqlServerPersistence(connStr);
 
 // Storage adapter (config key: Storage:Provider = wasabi | azureblob | filesystem)
@@ -85,109 +90,28 @@ else
 
 var app = builder.Build();
 
-// Seed file categories on startup (non-fatal — DB may not be available in dev without Docker)
+// Apply EF Core migrations and seed on startup (non-fatal — DB may not be available in dev without Docker)
 try
 {
     using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<StorageDbContext>();
+    await db.Database.MigrateAsync();
     var seeder = scope.ServiceProvider.GetRequiredService<FileCategorySeeder>();
     await seeder.SeedAsync(CancellationToken.None);
 }
 catch (Exception ex)
 {
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogWarning(ex, "Seeder skipped — database unavailable at startup.");
+    logger.LogWarning(ex, "Migration/seeder skipped — database unavailable at startup.");
 }
 
-if (app.Environment.IsDevelopment())
-    app.MapOpenApi();
+app.MapOpenApi();
+app.MapScalarApiReference("/swagger");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-static CallerContext BuildCaller(HttpContext ctx)
-{
-    var user = ctx.User;
-    Guid.TryParse(user.FindFirst("tid")?.Value, out var tenantId);
-    var principalId = user.FindFirst("sub")?.Value ?? user.FindFirst("oid")?.Value ?? string.Empty;
-    var principalType = user.FindFirst("azp") is not null ? "service" : "user";
-    var scopes = (user.FindFirst("scp")?.Value ?? user.FindFirst("roles")?.Value ?? string.Empty)
-        .Split(' ', StringSplitOptions.RemoveEmptyEntries);
-    return new CallerContext(tenantId, principalType, principalId, scopes);
-}
-
-static IResult MapError(ApplicationError error) => error switch
-{
-    NotFoundError e            => Results.NotFound(new { error = e.Message }),
-    AccessDeniedError          => Results.StatusCode(403),
-    IdempotencyConflictError e => Results.Conflict(new { error = e.Message }),
-    ChecksumMismatchError e    => Results.UnprocessableEntity(new { error = e.Message }),
-    PolicyViolationError e     => Results.Problem(e.Message, statusCode: e.HttpStatusHint),
-    _                          => Results.Problem("An unexpected error occurred.", statusCode: 500),
-};
-
-// ─── Health ───────────────────────────────────────────────────────────────────
-app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "storage-api" }))
-   .AllowAnonymous();
-
-// ─── POST /v1/files ──────────────────────────────────────────────────────────
-app.MapPost("/v1/files", async (
-    InitiateUploadRequest body,
-    HttpContext ctx,
-    UploadService svc,
-    CancellationToken ct) =>
-{
-    var idempotencyKey = ctx.Request.Headers["Idempotency-Key"].FirstOrDefault() ?? body.IdempotencyKey;
-    var caller = BuildCaller(ctx);
-    var result = await svc.InitiateUploadAsync(body with { IdempotencyKey = idempotencyKey }, caller, ct);
-    return result.IsSuccess ? Results.Ok(result.Value) : MapError(result.Error!);
-}).RequireAuthorization();
-
-// ─── POST /v1/files/{id}/complete ────────────────────────────────────────────
-app.MapPost("/v1/files/{id:guid}/complete", async (
-    Guid id,
-    CompleteUploadRequest body,
-    HttpContext ctx,
-    UploadService svc,
-    CancellationToken ct) =>
-{
-    var caller = BuildCaller(ctx);
-    var result = await svc.CompleteUploadAsync(id, body, caller, ct);
-    return result.IsSuccess ? Results.Ok(result.Value) : MapError(result.Error!);
-}).RequireAuthorization();
-
-// ─── GET /v1/files/{id} ──────────────────────────────────────────────────────
-app.MapGet("/v1/files/{id:guid}", async (
-    Guid id,
-    HttpContext ctx,
-    DownloadService svc,
-    CancellationToken ct) =>
-{
-    var caller = BuildCaller(ctx);
-    var result = await svc.GetFileAsync(id, caller, ct);
-    return result.IsSuccess ? Results.Ok(result.Value) : MapError(result.Error!);
-}).RequireAuthorization();
-
-// ─── GET /v1/files/{id}/content (audited proxy download) ─────────────────────
-app.MapGet("/v1/files/{id:guid}/content", async (
-    Guid id,
-    HttpContext ctx,
-    DownloadService svc,
-    CancellationToken ct) =>
-{
-    var caller = BuildCaller(ctx);
-    var result = await svc.GetFileStreamAsync(id, caller, ct);
-    if (!result.IsSuccess) return MapError(result.Error!);
-    return Results.Stream(result.Value!, "application/octet-stream");
-}).RequireAuthorization();
-
-// ─── GET /v1/categories ───────────────────────────────────────────────────────
-app.MapGet("/v1/categories", async (IUnitOfWork uow, CancellationToken ct) =>
-{
-    var categories = await uow.Categories.ListAllAsync(ct);
-    return Results.Ok(categories);
-}).RequireAuthorization();
+app.MapControllers();
 
 app.Run();
 

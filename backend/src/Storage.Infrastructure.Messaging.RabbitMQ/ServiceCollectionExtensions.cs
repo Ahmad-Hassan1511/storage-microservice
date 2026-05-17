@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
             });
         });
 
-        services.AddSingleton<IEventBus, RabbitMqEventBus>();
+        services.AddScoped<IEventBus, RabbitMqEventBus>();
         return services;
     }
 }

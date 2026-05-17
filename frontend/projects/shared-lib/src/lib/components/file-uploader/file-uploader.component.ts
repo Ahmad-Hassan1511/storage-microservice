@@ -114,12 +114,16 @@ export class FileUploaderComponent {
       this.progress.set(25);
       this.uploadChange.emit({ type: 'progress', progress: 25 });
 
-      if (!initResp.proxyRequired && initResp.uploadUrl) {
-        // PUT directly to presigned URL
+      if (initResp.proxyRequired) {
+        // FileSystem adapter: upload bytes through the API proxy endpoint
+        await firstValueFrom(
+          this.api.proxyUpload(initResp.fileId, file, file.type || 'application/octet-stream')
+        );
+      } else if (initResp.uploadUrl) {
+        // Object store adapter: PUT directly to presigned URL
         const headers: HeadersInit = { 'Content-Type': file.type };
         for (const [k, v] of Object.entries(initResp.uploadHeaders ?? {}))
           headers[k] = v;
-
         await fetch(initResp.uploadUrl, { method: 'PUT', headers, body: file });
       }
 

@@ -3,10 +3,17 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve demo-app",
+    "start:demo-app": "ng serve demo-app",
+    "start:all": "concurrently \"ng serve demo-app\" \"ng build shared-lib --watch --configuration development\"",
     "build": "ng build",
+    "build:demo-app": "ng build demo-app",
+    "build:shared-lib": "ng build shared-lib",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "watch:shared-lib": "ng build shared-lib --watch --configuration development",
+    "test": "ng test",
+    "test:demo-app": "ng test demo-app",
+    "test:shared-lib": "ng test shared-lib"
   },
   "private": true,
   "dependencies": {
@@ -27,6 +34,7 @@
     "@angular/cli": "^17.3.6",
     "@angular/compiler-cli": "^17.3.0",
     "@types/jasmine": "~5.1.0",
+    "concurrently": "^9.2.1",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

@@ -1,5 +1,6 @@
-import { Component, Input, signal, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { FileUploaderComponent, UploadEvent, FileApiService } from 'shared-lib';
 import { firstValueFrom } from 'rxjs';
 
@@ -17,7 +18,7 @@ import { firstValueFrom } from 'rxjs';
             <img [src]="avatarUrl()" alt="Avatar" class="avatar-img" />
           } @else {
             <div class="avatar-placeholder">
-              <span>No avatar</span>
+              <span>{{ avatarStatus() || 'No avatar' }}</span>
             </div>
           }
         </div>
@@ -26,7 +27,7 @@ import { firstValueFrom } from 'rxjs';
           <h3>Upload Avatar</h3>
           <p class="hint">Select an image. It will be resized to 256×256 and 64×64 thumbnails after scanning.</p>
           <lib-file-uploader
-            categoryId="avatar"
+            categoryId="image"
             ownerService="profile-service"
             label="Select Avatar Image"
             accept="image/jpeg,image/png,image/webp"
@@ -34,22 +35,6 @@ import { firstValueFrom } from 'rxjs';
           />
         </div>
       </section>
-
-      @if (thumbUrl256()) {
-        <section class="thumbnails-section">
-          <h3>Thumbnails</h3>
-          <div class="thumbs">
-            <div>
-              <p>256×256</p>
-              <img [src]="thumbUrl256()" alt="256px thumbnail" width="256" height="256" />
-            </div>
-            <div>
-              <p>64×64</p>
-              <img [src]="thumbUrl64()" alt="64px thumbnail" width="64" height="64" />
-            </div>
-          </div>
-        </section>
-      }
     </div>
   `,
   styles: [`
@@ -58,38 +43,37 @@ import { firstValueFrom } from 'rxjs';
     .avatar-section { display: flex; gap: 24px; align-items: flex-start; margin-bottom: 24px; }
     .avatar-container { flex-shrink: 0; }
     .avatar-img { width: 128px; height: 128px; border-radius: 50%; object-fit: cover; border: 2px solid #e0e0e0; }
-    .avatar-placeholder { width: 128px; height: 128px; border-radius: 50%; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #9e9e9e; font-size: 13px; border: 2px dashed #bdbdbd; }
+    .avatar-placeholder { width: 128px; height: 128px; border-radius: 50%; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #9e9e9e; font-size: 13px; text-align: center; padding: 8px; border: 2px dashed #bdbdbd; }
     .hint { font-size: 13px; color: #757575; margin-bottom: 12px; }
-    .thumbs { display: flex; gap: 24px; align-items: flex-start; }
-    .thumbs div { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .thumbs p { font-size: 12px; color: #616161; margin: 0; }
   `],
 })
 export class ProfileComponent {
-  private readonly api = inject(FileApiService);
+  private readonly api: FileApiService = inject(FileApiService);
+  private readonly http = inject(HttpClient);
 
   avatarUrl = signal<string | null>(null);
-  thumbUrl256 = signal<string | null>(null);
-  thumbUrl64 = signal<string | null>(null);
+  avatarStatus = signal<string | null>(null);
 
   onAvatarUpload(event: UploadEvent): void {
     if (event.type === 'uploaded' && event.fileId) {
-      this.pollForReadyState(event.fileId);
+      this.avatarStatus.set('Processing...');
+      this.loadAvatar(event.fileId);
     }
   }
 
-  private async pollForReadyState(fileId: string, attempts = 0): Promise<void> {
-    if (attempts > 20) return; // give up after ~20 sec
+  private async loadAvatar(fileId: string): Promise<void> {
     try {
-      const file = await firstValueFrom(this.api.getFile(fileId));
-      if (file.status === 'ready') {
-        this.avatarUrl.set(file.downloadUrl);
-        // Thumbnails would be fetched from profile-service API in a real app
-      } else {
-        setTimeout(() => this.pollForReadyState(fileId, attempts + 1), 1000);
-      }
+      // Simulate antivirus scan (dev only)
+      await firstValueFrom(this.api.markReady(fileId));
+
+      // Fetch image bytes via HttpClient so the auth interceptor adds Bearer token
+      const blob = await firstValueFrom(
+        this.http.get(`/v1/files/${fileId}/content`, { responseType: 'blob' })
+      );
+      this.avatarUrl.set(URL.createObjectURL(blob));
+      this.avatarStatus.set(null);
     } catch {
-      setTimeout(() => this.pollForReadyState(fileId, attempts + 1), 1000);
+      this.avatarStatus.set('Upload failed');
     }
   }
 }

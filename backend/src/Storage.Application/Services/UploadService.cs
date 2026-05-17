@@ -122,9 +122,17 @@ public class UploadService(
             return Result<CompleteUploadResponse>.Failure(new PolicyViolationError(ex.Message, 400));
         }
 
-        if (file.Checksum is null || file.Checksum.Value != supplied.Value)
+        if (file.Checksum is null)
+        {
+            // Presigned-URL path: bytes went directly to object store; trust and persist the client checksum.
+            var storageKey = StorageKey.Create(file.TenantId, DateOnly.FromDateTime(file.CreatedAt), file.Id);
+            file.SetStorageDetails(storageKey, supplied);
+        }
+        else if (file.Checksum.Value != supplied.Value)
+        {
             return Result<CompleteUploadResponse>.Failure(
                 new ChecksumMismatchError("Supplied checksum does not match the stored checksum."));
+        }
 
         file.Transition(FileStatus.Scanning);
 
@@ -140,6 +148,32 @@ public class UploadService(
 
         return Result<CompleteUploadResponse>.Success(
             new CompleteUploadResponse(file.Id, file.Status.ToString().ToLowerInvariant()));
+    }
+
+    public async Task<Result<bool>> ProxyUploadAsync(
+        Guid fileId,
+        Stream content,
+        string contentType,
+        CallerContext caller,
+        CancellationToken ct)
+    {
+        var file = await unitOfWork.Files.GetByIdAsync(fileId, caller.TenantId, ct);
+        if (file is null)
+            return Result<bool>.Failure(new NotFoundError($"File {fileId} not found."));
+
+        var storageKey = StorageKey.Create(file.TenantId, DateOnly.FromDateTime(file.CreatedAt), file.Id);
+
+        using var buffer = new MemoryStream();
+        await content.CopyToAsync(buffer, ct);
+        var hashBytes = SHA256.HashData(buffer.ToArray());
+        var checksum = new Checksum(Convert.ToHexStringLower(hashBytes));
+        buffer.Position = 0;
+
+        await storage.WriteStreamAsync(DefaultBucket, storageKey.Value, buffer, contentType, ct);
+        file.SetStorageDetails(storageKey, checksum);
+        await unitOfWork.SaveChangesAsync(ct);
+
+        return Result<bool>.Success(true);
     }
 
     private static string ComputePayloadHash(string categoryId, string originalFileName, long sizeBytes, string ownerService)

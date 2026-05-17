@@ -6,7 +6,7 @@ namespace Storage.Infrastructure.Storage.FileSystem;
 
 public sealed class FileSystemOptions
 {
-    public string BasePath { get; set; } = string.Empty;
+    public string BasePath { get; set; } = Path.Combine(Path.GetTempPath(), "storage-microservice");
 }
 
 public sealed class FileSystemStorageProvider : IFileStorageProvider

@@ -119,6 +119,6 @@ public sealed class FileManagementService(
     }
 
     private static GetFileResponse MapToResponse(DomainFile file) =>
-        new(file.Id, file.Status.ToString(), file.OriginalFileName,
+        new(file.Id, file.Status.ToString().ToLowerInvariant(), file.OriginalFileName,
             file.MimeType, file.SizeBytes, null, null, null, file.CreatedAt, null);
 }
