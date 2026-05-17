@@ -2,7 +2,8 @@ namespace Storage.Sdk;
 
 public sealed class StorageClientOptions
 {
-    public string BaseUrl { get; set; } = "http://localhost:5100";
+    public string BaseUrl { get; set; } = "http://localhost:5170";
+    public string? AccessToken { get; set; }
     public int MaxRetries { get; set; } = 3;
     public TimeSpan InitialRetryDelay { get; set; } = TimeSpan.FromMilliseconds(500);
     public long MultipartThresholdBytes { get; set; } = 5 * 1024 * 1024; // 5 MB

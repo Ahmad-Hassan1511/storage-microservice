@@ -9,5 +9,17 @@
     "target": "http://localhost:5170",
     "secure": false,
     "changeOrigin": true
+  },
+  "/api/documents": {
+    "target": "http://localhost:56163",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
+  },
+  "/api/profiles": {
+    "target": "http://localhost:56161",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
   }
 }

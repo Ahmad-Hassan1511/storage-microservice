@@ -5,15 +5,26 @@ import {
   EventEmitter,
   inject,
   signal,
-  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FileApiService } from '../../services/file-api.service';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+
+export interface UploadInitResponse {
+  id: string;
+  fileId: string;
+  uploadUrl: string | null;
+  uploadHeaders: Record<string, string>;
+  proxyRequired: boolean;
+  proxyUploadUrl: string | null;
+  completeUrl: string;
+  expiresAt: string;
+}
 
 export interface UploadEvent {
   type: 'started' | 'progress' | 'uploaded' | 'failed';
-  fileId?: string;
+  id?: string;      // domain entity id returned by the domain service
+  fileId?: string;  // storage file id
   progress?: number;
   error?: string;
 }
@@ -54,8 +65,8 @@ export interface UploadEvent {
         <p class="error">{{ errorMessage() }}</p>
       }
 
-      @if (lastFileId()) {
-        <p class="success">Uploaded: {{ lastFileId() }}</p>
+      @if (lastUploadedName()) {
+        <p class="success">Uploaded: {{ lastUploadedName() }}</p>
       }
     </div>
   `,
@@ -71,19 +82,19 @@ export interface UploadEvent {
   `],
 })
 export class FileUploaderComponent {
-  @Input() categoryId = 'document';
-  @Input() ownerService = 'demo-app';
+  /** Domain service endpoint to POST to for initiating upload, e.g. '/api/documents'. */
+  @Input() initiateUrl = '';
   @Input() label = 'Choose File';
   @Input() accept = '*/*';
 
   @Output() uploadChange = new EventEmitter<UploadEvent>();
 
-  private readonly api = inject(FileApiService);
+  private readonly http = inject(HttpClient);
 
   uploading = signal(false);
   progress = signal(0);
   errorMessage = signal<string | null>(null);
-  lastFileId = signal<string | null>(null);
+  lastUploadedName = signal<string | null>(null);
 
   async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -92,58 +103,58 @@ export class FileUploaderComponent {
 
     this.uploading.set(true);
     this.errorMessage.set(null);
-    this.lastFileId.set(null);
+    this.lastUploadedName.set(null);
     this.progress.set(0);
-
     this.uploadChange.emit({ type: 'started' });
 
     try {
-      const idempotencyKey = crypto.randomUUID().replace(/-/g, '');
-
-      const initResp = await firstValueFrom(
-        this.api.initiateUpload({
-          categoryId: this.categoryId,
-          originalFileName: file.name,
+      // 1. Initiate upload with domain service
+      const init = await firstValueFrom(
+        this.http.post<UploadInitResponse>(this.initiateUrl, {
+          fileName: file.name,
           mimeType: file.type || 'application/octet-stream',
           sizeBytes: file.size,
-          idempotencyKey,
-          ownerService: this.ownerService,
         })
       );
 
       this.progress.set(25);
       this.uploadChange.emit({ type: 'progress', progress: 25 });
 
-      if (initResp.proxyRequired) {
-        // FileSystem adapter: upload bytes through the API proxy endpoint
-        await firstValueFrom(
-          this.api.proxyUpload(initResp.fileId, file, file.type || 'application/octet-stream')
-        );
-      } else if (initResp.uploadUrl) {
-        // Object store adapter: PUT directly to presigned URL
-        const headers: HeadersInit = { 'Content-Type': file.type };
-        for (const [k, v] of Object.entries(initResp.uploadHeaders ?? {}))
+      // 2. Upload bytes — either to presigned URL (object store) or domain service proxy
+      if (!init.proxyRequired && init.uploadUrl) {
+        // Direct to object store via presigned URL — no auth header needed
+        const headers: HeadersInit = { 'Content-Type': file.type || 'application/octet-stream' };
+        for (const [k, v] of Object.entries(init.uploadHeaders ?? {}))
           headers[k] = v;
-        await fetch(initResp.uploadUrl, { method: 'PUT', headers, body: file });
+        const putResp = await fetch(init.uploadUrl, { method: 'PUT', headers, body: file });
+        if (!putResp.ok) throw new Error(`Upload failed: ${putResp.status}`);
+      } else if (init.proxyUploadUrl) {
+        // Proxy through domain service
+        await firstValueFrom(
+          this.http.put(init.proxyUploadUrl, file, {
+            headers: { 'Content-Type': file.type || 'application/octet-stream' },
+          })
+        );
       }
 
       this.progress.set(75);
       this.uploadChange.emit({ type: 'progress', progress: 75 });
 
-      // Compute SHA-256
+      // 3. Compute SHA-256 checksum
       const buffer = await file.arrayBuffer();
       const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
       const checksumHex = Array.from(new Uint8Array(hashBuffer))
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
 
+      // 4. Complete upload via domain service
       await firstValueFrom(
-        this.api.completeUpload(initResp.fileId, checksumHex, file.size)
+        this.http.post(init.completeUrl, { checksumSha256: checksumHex, sizeBytes: file.size })
       );
 
       this.progress.set(100);
-      this.lastFileId.set(initResp.fileId);
-      this.uploadChange.emit({ type: 'uploaded', fileId: initResp.fileId, progress: 100 });
+      this.lastUploadedName.set(file.name);
+      this.uploadChange.emit({ type: 'uploaded', id: init.id, fileId: init.fileId, progress: 100 });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Upload failed';
       this.errorMessage.set(msg);

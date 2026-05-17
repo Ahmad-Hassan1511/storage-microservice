@@ -1,7 +1,7 @@
 import { test, expect, request as pwRequest } from '@playwright/test';
 import { createHmac } from 'crypto';
 
-const API = process.env['API_BASE_URL'] ?? 'http://localhost:5100';
+const API = process.env['API_BASE_URL'] ?? 'http://localhost:5170';
 // Must match Auth:DevelopmentSigningKey in appsettings / Program.cs fallback
 const DEV_KEY = 'dev-signing-key-32-bytes-minimum!';
 

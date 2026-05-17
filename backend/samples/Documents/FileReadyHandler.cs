@@ -27,7 +27,6 @@ public sealed class FileReadyHandler(DocumentsDbContext db) : IConsumer<FileRead
         if (doc is null) return;
 
         doc.Status = "ready";
-        doc.DownloadUrl = evt.DownloadUrl;
         await db.SaveChangesAsync(context.CancellationToken);
     }
 }

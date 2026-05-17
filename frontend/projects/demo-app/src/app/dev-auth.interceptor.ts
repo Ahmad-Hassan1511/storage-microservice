@@ -8,7 +8,7 @@ const DEV_TOKEN =
   '.-lD-oM9nDd5y5EXijhtkTOk1VrzXifq-rkFxG9F-j_E';
 
 export const devAuthInterceptor: HttpInterceptorFn = (req, next) => {
-  if (req.url.startsWith('/v1')) {
+  if (req.url.startsWith('/v1') || req.url.startsWith('/api')) {
     req = req.clone({ setHeaders: { Authorization: `Bearer ${DEV_TOKEN}` } });
   }
   return next(req);

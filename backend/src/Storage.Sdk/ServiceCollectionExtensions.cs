@@ -19,6 +19,8 @@ public static class ServiceCollectionExtensions
             var opts = sp.GetRequiredService<IOptions<StorageClientOptions>>().Value;
             var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("storage-sdk");
             http.BaseAddress = new Uri(opts.BaseUrl);
+            if (!string.IsNullOrEmpty(opts.AccessToken))
+                http.DefaultRequestHeaders.Authorization = new("Bearer", opts.AccessToken);
             return new StorageClient(http, opts);
         });
 

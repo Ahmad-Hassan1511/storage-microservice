@@ -10,15 +10,14 @@ public sealed class DocumentsDbContext(DbContextOptions<DocumentsDbContext> opti
 public sealed class Document
 {
     public Guid Id { get; set; }
+    public Guid TenantId { get; set; }
     public string Title { get; set; } = string.Empty;
     public Guid? FileId { get; set; }
-    public string Status { get; set; } = "uploading"; // uploading | ready
-    public string? DownloadUrl { get; set; }
+    public string Status { get; set; } = "uploading";
+    public string? MimeType { get; set; }
+    public long? SizeBytes { get; set; }
     public DateTime CreatedAt { get; set; }
 }
 
-public sealed record UploadDocumentRequest(
-    string Title,
-    string FileName,
-    string MimeType,
-    long SizeBytes);
+public sealed record InitiateDocumentUploadRequest(string FileName, string MimeType, long SizeBytes);
+public sealed record CompleteDocumentUploadRequest(string ChecksumSha256, long SizeBytes);

@@ -56,8 +56,11 @@ public sealed class StorageClient(HttpClient http, StorageClientOptions options)
         }
         else
         {
-            // Proxy path: PUT directly to the API /v1/files/{id}/content not yet implemented;
-            // fall through to complete — the API will fetch the bytes from a pre-staged location
+            using var putReq = new HttpRequestMessage(HttpMethod.Put, $"/v1/files/{initiateResp.FileId}");
+            putReq.Content = new ByteArrayContent(bytes);
+            putReq.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(request.MimeType);
+            var putResp = await http.SendAsync(putReq, ct);
+            putResp.EnsureSuccessStatusCode();
         }
 
         var completeBody = new { checksumSha256 = checksumHex, sizeBytes = request.SizeBytes };
@@ -70,6 +73,60 @@ public sealed class StorageClient(HttpClient http, StorageClientOptions options)
         }, ct);
 
         return new UploadFileResult(completeResp.FileId, completeResp.Status, null);
+    }
+
+    public async Task<InitiateUploadResponse> InitiateUploadAsync(
+        UploadFileRequest request, string idempotencyKey, CancellationToken ct = default)
+    {
+        var body = new
+        {
+            categoryId = request.CategoryId,
+            originalFileName = request.OriginalFileName,
+            mimeType = request.MimeType,
+            sizeBytes = request.SizeBytes,
+            idempotencyKey,
+            ownerService = request.OwnerService,
+        };
+        return await RetryAsync(async () =>
+        {
+            using var req = new HttpRequestMessage(HttpMethod.Post, "/v1/files");
+            req.Headers.Add("Idempotency-Key", idempotencyKey);
+            req.Content = JsonContent.Create(body);
+            var resp = await http.SendAsync(req, ct);
+            resp.EnsureSuccessStatusCode();
+            return await resp.Content.ReadFromJsonAsync<InitiateUploadResponse>(ct)
+                ?? throw new InvalidOperationException("Empty initiate response.");
+        }, ct);
+    }
+
+    public async Task ProxyUploadAsync(Guid fileId, Stream content, string contentType, CancellationToken ct = default)
+    {
+        using var req = new HttpRequestMessage(HttpMethod.Put, $"/v1/files/{fileId}");
+        req.Content = new StreamContent(content);
+        req.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+        var resp = await http.SendAsync(req, ct);
+        resp.EnsureSuccessStatusCode();
+    }
+
+    public async Task<CompleteUploadResponse> CompleteUploadAsync(
+        Guid fileId, string checksumSha256, long sizeBytes, CancellationToken ct = default)
+    {
+        var body = new { checksumSha256, sizeBytes };
+        return await RetryAsync(async () =>
+        {
+            var resp = await http.PostAsJsonAsync($"/v1/files/{fileId}/complete", body, ct);
+            resp.EnsureSuccessStatusCode();
+            return await resp.Content.ReadFromJsonAsync<CompleteUploadResponse>(ct)
+                ?? throw new InvalidOperationException("Empty complete response.");
+        }, ct);
+    }
+
+    public async Task DevMarkReadyAsync(Guid fileId, CancellationToken ct = default)
+    {
+        var resp = await http.PostAsync($"/v1/dev/files/{fileId}/mark-ready", null, ct);
+        // best-effort: 404 means non-Development environment, ignore
+        if (resp.StatusCode != System.Net.HttpStatusCode.NotFound)
+            resp.EnsureSuccessStatusCode();
     }
 
     public async Task<GetFileResponse?> GetFileAsync(Guid fileId, CancellationToken ct = default)

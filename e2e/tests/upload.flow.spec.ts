@@ -2,8 +2,6 @@ import { test, expect } from '@playwright/test';
 
 const APP_URL = process.env['APP_BASE_URL'] ?? 'http://localhost:4200';
 
-// ─── Browser UI E2E flows ─────────────────────────────────────────────────────
-
 test.describe('Document upload flow', () => {
   test('E-UI01 — documents page loads and shows upload button', async ({ page }) => {
     await page.goto(`${APP_URL}/documents`);
