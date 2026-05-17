@@ -4,9 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Purpose
 
-This directory contains the architecture design document for a **Storage Microservice** (`storage-microservice-architecture.md`). It is a design artifact, not a code repository. There are no build commands or test runners.
+This repository contains the **Storage Microservice** implementation and its architecture design documents.
 
-**Read `storage-microservice-architecture.md` first.** The document's own header identifies Sections 6 (Low-Level Design) and 10 (Ports and Adapters) as source-of-truth contracts for all implementation decisions.
+**Read `docs/storage-microservice-architecture.md` first.** The document's own header identifies Sections 6 (Low-Level Design) and 10 (Ports and Adapters) as source-of-truth contracts for all implementation decisions.
+
+Design documents are located in `docs/`:
+- `docs/storage-microservice-architecture.md` — canonical architecture reference
+- `docs/storage-microservice-design.docx` — full design document
+- `docs/storage-microservice-summary.docx` — summary document
+- `docs/images/` — architecture diagrams and screenshots
 
 ---
 
